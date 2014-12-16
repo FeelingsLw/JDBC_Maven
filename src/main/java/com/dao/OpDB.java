@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
+import com.model.CreatePage;
 import com.model.InfoSingle;
 
 //初始化主页导航菜单与后台下拉菜单列表框选项
@@ -114,8 +115,32 @@ public class OpDB {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
+		}	
 		return mark;
+	}
+	
+	public CreatePage OpCreatePage(String sqlall,Object[]params,int perR,String CurrentP,String gowhich){
+		CreatePage page=new CreatePage();
+		page.setPerR(perR);										//设置每页显示记录数
+		if(sqlall!=null&&sqlall.equals("")){
+			DB mydb=new DB();
+			mydb.doPstm(sqlall, params);						
+			try {
+				ResultSet rs=mydb.getRs();						//获取结果集
+				if(rs!=null&&rs.next()){
+					rs.last();									//将指针移动到结果集的最后一行
+					page.setAllR(rs.getRow());					//调用getRow()方法获取当前记录行数（总记录数）
+					page.setAllP();								
+					page.setCurrentP(CurrentP);					//设置当前页
+					page.setPageInfo();							//设置分页状态信息
+					page.setPageLink(gowhich);					//设置分页导航链接
+					rs.close();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}
+		return page;
 	}
 }
